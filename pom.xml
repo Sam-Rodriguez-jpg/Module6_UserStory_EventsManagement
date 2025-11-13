@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.user-story</groupId>
-	<artifactId>Module-6-User-Story-1-Project</artifactId>
+	<artifactId>Module-6-User-Story-Project</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Module-6-User-Story-1-Project</name>
-	<description>Catálogo In-Memory de Eventos y Venues (REST + Arquitectura por Capas)</description>
+	<name>Module-6-User-Story-Project</name>
+	<description>Project on event and venue management</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -50,6 +50,16 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.42</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.8.14</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.18.0</version>
         </dependency>
 	</dependencies>
 
