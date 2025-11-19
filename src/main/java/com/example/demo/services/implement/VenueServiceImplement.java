@@ -1,34 +1,41 @@
 package com.example.demo.services.implement;
 
 import com.example.demo.dtos.requests.VenueDtoRequest;
+import com.example.demo.dtos.responses.EventDtoResponse;
 import com.example.demo.dtos.responses.VenueDtoResponse;
 import com.example.demo.entities.VenueEntity;
 import com.example.demo.exceptions.custom.BadRequestException;
 import com.example.demo.exceptions.custom.NoContentException;
 import com.example.demo.exceptions.custom.NotFoundException;
 import com.example.demo.mappers.VenueMapper;
-import com.example.demo.repositories.implement.VenueRepositoryImplement;
+import com.example.demo.repositories.VenueJpaRepository;
 import com.example.demo.services.interfaces.VenueServiceInterface;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class VenueServiceImplement implements VenueServiceInterface {
 
     // Database
-    private final VenueRepositoryImplement venueRepository = new VenueRepositoryImplement();
+    private final VenueJpaRepository venueJpaRepository;
 
-    // Mapper para convertir entre Dto y Entity
-    private final VenueMapper venueMapper = new VenueMapper();
+    // Mapper
+    private final VenueMapper venueMapper;
 
     // GET ALL
     @Override
-    public List<VenueDtoResponse> getAllVenues() {
+    public List<VenueDtoResponse> findAll() {
 
         // Obtener todos los venues del repository
-        List<VenueEntity> venueEntitiesList = venueRepository.getAllVenues();
+        List<VenueEntity> venueEntitiesList = venueJpaRepository.findAll();
 
         // Validar si esta vacía la lista
         if (venueEntitiesList.isEmpty()) {
@@ -49,31 +56,35 @@ public class VenueServiceImplement implements VenueServiceInterface {
 
     // GET BY ID
     @Override
-    public VenueDtoResponse getVenueById(long id) {
+    public VenueDtoResponse findById(long id) {
         // Buscar venue dentro de la lista
-        VenueEntity venueEntity = venueRepository.getVenueById(id);
+        Optional<VenueEntity> optionalVenueEntity = venueJpaRepository.findById(id);
 
         // Si no existe, lanza lanza la excepción personalizada
-        if (venueEntity == null) {
-            throw new NotFoundException("Venue con ID: " + id + " no encontrado");
+        if (optionalVenueEntity.isEmpty()) {
+            throw new NotFoundException("Espacio con ID: " + id + " no encontrado");
         }
 
         // Si existe, convertir a Dto Response y devolver
-        return venueMapper.toResponse(venueEntity);
+        return venueMapper.toResponse(optionalVenueEntity.get());
     }
 
 
     // POST
     @Override
-    public VenueDtoResponse createVenue(VenueDtoRequest venueDtoRequest) {
+    public VenueDtoResponse create(VenueDtoRequest venueDtoRequest) {
 
-        if (venueDtoRequest.nameVenue() == null || venueDtoRequest.cityVenue() == null || venueDtoRequest.addressVenue() == null) throw new BadRequestException("No puedes dejar campos vacíos");
-
+        // Validar campos vacíos
+        if (venueDtoRequest.nameVenue() == null ||
+            venueDtoRequest.cityVenue() == null ||
+            venueDtoRequest.addressVenue() == null) {
+            throw new BadRequestException("No puedes dejar campos vacíos");
+        }
         // Se convierte de Dto Request a Entity
         VenueEntity venueEntity = venueMapper.toEntity(venueDtoRequest);
 
         // Se guarda en la lista
-        VenueEntity savedVenue = venueRepository.createVenue(venueEntity);
+        VenueEntity savedVenue = venueJpaRepository.save(venueEntity);
 
         // Se convierte de Entity a Dto Response y lo devuelve
         return venueMapper.toResponse(savedVenue);
@@ -81,11 +92,17 @@ public class VenueServiceImplement implements VenueServiceInterface {
 
     // PUT
     @Override
-    public VenueDtoResponse updateVenue(long id, VenueDtoRequest venueDtoRequest) {
+    public VenueDtoResponse update(long id, VenueDtoRequest venueDtoRequest) {
 
-        // Buscar si existe
-        VenueEntity venueEntity = venueRepository.getVenueById(id);
-        if (venueEntity == null) throw new NotFoundException("Venue con ID: " + id + " no encontrado");
+        // Buscar venue dentro de la lista
+        Optional<VenueEntity> optionalVenueEntity = venueJpaRepository.findById(id);
+
+        // Si no existe, lanza lanza la excepción personalizada
+        if (optionalVenueEntity.isEmpty()) {
+            throw new NotFoundException("Espacio con ID: " + id + " no encontrado");
+        }
+
+        VenueEntity venueEntity = optionalVenueEntity.get();
 
         // Reemplazar los valores
         venueEntity.setNameVenue(venueDtoRequest.nameVenue());
@@ -99,11 +116,17 @@ public class VenueServiceImplement implements VenueServiceInterface {
 
     // PATCH
     @Override
-    public VenueDtoResponse partialUpdateVenue(long id, VenueDtoRequest venueDtoRequest) {
+    public VenueDtoResponse partialUpdate(long id, VenueDtoRequest venueDtoRequest) {
 
-        // Buscar si existe
-        VenueEntity venueEntity = venueRepository.getVenueById(id);
-        if (venueEntity == null) throw new NotFoundException("Venue con ID: " + id + " no encontrado");
+        // Buscar venue dentro de la lista
+        Optional<VenueEntity> optionalVenueEntity = venueJpaRepository.findById(id);
+
+        // Si no existe, lanza lanza la excepción personalizada
+        if (optionalVenueEntity.isEmpty()) {
+            throw new NotFoundException("Espacio con ID: " + id + " no encontrado");
+        }
+
+        VenueEntity venueEntity = optionalVenueEntity.get();
 
         // Reemplazar los valores
         if (venueDtoRequest.nameVenue() != null) venueEntity.setNameVenue(venueDtoRequest.nameVenue());
@@ -117,18 +140,18 @@ public class VenueServiceImplement implements VenueServiceInterface {
 
     // DELETE BY ID
     @Override
-    public void deleteVenueById(long id) {
+    public void deleteById(long id) {
         // Buscar si existe
-        VenueEntity venueEntity = venueRepository.getVenueById(id);
-        if (venueEntity == null) throw new NotFoundException("Venue con ID: " + id + " no encontrado");
+        Optional<VenueEntity> optionalVenueEntity = venueJpaRepository.findById(id);
+        if (optionalVenueEntity.isEmpty()) throw new NotFoundException("Espacio con ID: " + id + " no encontrado");
 
         // Si lo encuentra, lo elimina
-        venueRepository.deleteVenue(id);
+        venueJpaRepository.deleteById(id);
     }
 
     // DELETE ALL
     @Override
-    public void deleteAllVenues() {
-        venueRepository.deleteAllVenues();
+    public void deleteAll() {
+        venueJpaRepository.deleteAll();
     }
 }

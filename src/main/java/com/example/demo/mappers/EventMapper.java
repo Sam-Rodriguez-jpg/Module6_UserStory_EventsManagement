@@ -3,38 +3,18 @@ package com.example.demo.mappers;
 import com.example.demo.dtos.requests.EventDtoRequest;
 import com.example.demo.dtos.responses.EventDtoResponse;
 import com.example.demo.entities.EventEntity;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 
-public class EventMapper {
+@Mapper(componentModel = "spring")
+public interface EventMapper {
 
-    // De Entity a DtoResponse (Visualizar)
-    public EventDtoResponse toResponse(EventEntity eventEntity) {
-        if (eventEntity == null) return null;
+    EventMapper INSTANCE = Mappers.getMapper(EventMapper.class);
 
-        return new EventDtoResponse(
-                eventEntity.getIdEvent(),
-                eventEntity.getNameEvent(),
-                eventEntity.getDescriptionEvent(),
-                eventEntity.getDatetimeEvent(),
-                eventEntity.getDurationEvent(),
-                eventEntity.getPriceEvent(),
-                eventEntity.getStatusEvent(),
-                eventEntity.getIdVenue()
-        );
-    }
+    @Mapping(target = "venueEntity", ignore = true)
+    EventEntity toEntity(EventDtoRequest dto);
 
-    // De DtoRequest a Entity (Crear)
-    public EventEntity toEntity(EventDtoRequest eventDtoRequest) {
-        if (eventDtoRequest == null) return null;
-
-        EventEntity eventEntity = new EventEntity();
-        eventEntity.setNameEvent(eventDtoRequest.nameEvent());
-        eventEntity.setDescriptionEvent(eventDtoRequest.descriptionEvent());
-        eventEntity.setDatetimeEvent(eventDtoRequest.datetimeEvent());
-        eventEntity.setDurationEvent(eventDtoRequest.durationEvent());
-        eventEntity.setPriceEvent(eventDtoRequest.priceEvent());
-        eventEntity.setStatusEvent(eventDtoRequest.statusEvent());
-        eventEntity.setIdEvent(eventDtoRequest.idVenue());
-
-        return eventEntity;
-    }
+    @Mapping(target = "idVenue", source = "venueEntity.idVenue")
+    EventDtoResponse toResponse(EventEntity entity);
 }

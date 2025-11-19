@@ -1,6 +1,7 @@
 package com.example.demo.exceptions.handler;
 
 import com.example.demo.exceptions.custom.BadRequestException;
+import com.example.demo.exceptions.custom.ConflictException;
 import com.example.demo.exceptions.custom.NoContentException;
 import com.example.demo.exceptions.custom.NotFoundException;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.valueOf(500));
     }
 
-    // Excepciones custom
+    // Excepciones custom / Controladas
     // 204 - Not Content
     @ExceptionHandler(NoContentException.class)
     public ResponseEntity<Map<String, Object>> handleNotContentException(Exception exception) {
@@ -57,5 +58,16 @@ public class GlobalExceptionHandler {
         response.put("error", "Not Found");
         response.put("message", exception.getMessage());
         return new ResponseEntity<>(response, HttpStatus.valueOf(404));
+    }
+
+    // 409 - Conflict
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<Map<String, Object>> handlerConflictException(Exception exception) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", LocalDateTime.now());
+        response.put("statusEvent", HttpStatus.valueOf(409));
+        response.put("error", "Conflict");
+        response.put("message", exception.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.valueOf(409));
     }
 }
