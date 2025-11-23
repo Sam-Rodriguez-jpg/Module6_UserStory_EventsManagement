@@ -1,4 +1,4 @@
-package com.example.demo.entities;
+package com.example.demo.infrastructure.adapters.out.jpa.entites;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

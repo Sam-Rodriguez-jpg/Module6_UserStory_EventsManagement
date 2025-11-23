@@ -1,8 +1,7 @@
 package com.example.demo.repositories;
 
-import com.example.demo.dtos.responses.EventDtoResponse;
 import com.example.demo.entities.EventEntity;
-import com.example.demo.enums.StatusEventEnum;
+import com.example.demo.domain.models.enums.StatusEventEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

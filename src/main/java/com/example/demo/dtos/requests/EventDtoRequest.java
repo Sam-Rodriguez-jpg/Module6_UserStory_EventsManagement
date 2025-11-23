@@ -1,6 +1,6 @@
 package com.example.demo.dtos.requests;
 
-import com.example.demo.enums.StatusEventEnum;
+import com.example.demo.domain.models.enums.StatusEventEnum;
 
 import java.time.LocalDateTime;
 
