@@ -1,4 +1,4 @@
-package com.example.demo.mappers;
+package com.example.demo.infrastructure.adapters.out.jpa.mapper;
 
 import com.example.demo.dtos.requests.VenueDtoRequest;
 import com.example.demo.dtos.responses.VenueDtoResponse;

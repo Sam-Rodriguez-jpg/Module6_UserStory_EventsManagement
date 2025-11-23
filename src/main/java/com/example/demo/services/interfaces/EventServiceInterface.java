@@ -2,7 +2,7 @@ package com.example.demo.services.interfaces;
 
 import com.example.demo.dtos.requests.EventDtoRequest;
 import com.example.demo.dtos.responses.EventDtoResponse;
-import com.example.demo.enums.StatusEventEnum;
+import com.example.demo.domain.models.enums.StatusEventEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

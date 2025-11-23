@@ -1,8 +1,8 @@
-package com.example.demo.mappers;
+package com.example.demo.infrastructure.adapters.out.jpa.mapper;
 
 import com.example.demo.dtos.requests.EventDtoRequest;
 import com.example.demo.dtos.responses.EventDtoResponse;
-import com.example.demo.entities.EventEntity;
+import com.example.demo.infrastructure.adapters.out.jpa.entites.EventEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

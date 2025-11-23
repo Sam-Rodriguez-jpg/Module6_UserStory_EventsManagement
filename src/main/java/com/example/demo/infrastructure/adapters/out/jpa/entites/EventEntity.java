@@ -1,6 +1,7 @@
-package com.example.demo.entities;
+package com.example.demo.infrastructure.adapters.out.jpa.entites;
 
-import com.example.demo.enums.*;
+import com.example.demo.domain.models.enums.StatusEventEnum;
+import com.example.demo.entities.VenueEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;

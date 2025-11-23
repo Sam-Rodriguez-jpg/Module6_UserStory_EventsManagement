@@ -1,8 +1,8 @@
-package com.example.demo.controllers;
+package com.example.demo.infrastructure.adapters.in.web;
 
+import com.example.demo.domain.models.enums.StatusEventEnum;
 import com.example.demo.dtos.requests.EventDtoRequest;
 import com.example.demo.dtos.responses.EventDtoResponse;
-import com.example.demo.domain.models.enums.StatusEventEnum;
 import com.example.demo.services.implement.EventServiceImplement;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

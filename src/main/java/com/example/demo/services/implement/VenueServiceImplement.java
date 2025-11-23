@@ -1,19 +1,15 @@
 package com.example.demo.services.implement;
 
 import com.example.demo.dtos.requests.VenueDtoRequest;
-import com.example.demo.dtos.responses.EventDtoResponse;
 import com.example.demo.dtos.responses.VenueDtoResponse;
 import com.example.demo.entities.VenueEntity;
 import com.example.demo.exceptions.custom.BadRequestException;
 import com.example.demo.exceptions.custom.NoContentException;
 import com.example.demo.exceptions.custom.NotFoundException;
-import com.example.demo.mappers.VenueMapper;
+import com.example.demo.infrastructure.adapters.out.jpa.mapper.VenueMapper;
 import com.example.demo.repositories.VenueJpaRepository;
 import com.example.demo.services.interfaces.VenueServiceInterface;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
