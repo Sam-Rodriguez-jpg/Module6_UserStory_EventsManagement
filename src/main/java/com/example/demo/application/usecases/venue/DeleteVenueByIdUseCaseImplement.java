@@ -3,7 +3,7 @@ package com.example.demo.application.usecases.venue;
 import com.example.demo.domain.models.VenueModel;
 import com.example.demo.domain.ports.in.venue.DeleteVenueByIdUseCaseInterface;
 import com.example.demo.domain.ports.out.VenueRepositoryPort;
-import com.example.demo.exceptions.custom.NotFoundException;
+import com.example.demo.infrastructure.adapters.in.web.exceptions.custom.NotFoundException;
 
 import java.util.Optional;
 

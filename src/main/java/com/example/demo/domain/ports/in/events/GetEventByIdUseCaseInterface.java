@@ -5,5 +5,5 @@ import com.example.demo.domain.models.EventModel;
 import java.util.Optional;
 
 public interface GetEventByIdUseCaseInterface {
-    Optional<EventModel> findById(Long id);
+    EventModel findById(Long id);
 }

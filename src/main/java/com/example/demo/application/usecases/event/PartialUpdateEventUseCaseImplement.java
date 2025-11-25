@@ -1,11 +1,10 @@
 package com.example.demo.application.usecases.event;
 
 import com.example.demo.domain.models.EventModel;
-import com.example.demo.domain.models.VenueModel;
 import com.example.demo.domain.models.enums.StatusEventEnum;
 import com.example.demo.domain.ports.in.events.PartialUpdateEventUseCaseInterface;
 import com.example.demo.domain.ports.out.EventRepositoryPort;
-import com.example.demo.exceptions.custom.NotFoundException;
+import com.example.demo.infrastructure.adapters.in.web.exceptions.custom.NotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
