@@ -1,7 +1,6 @@
-package com.example.demo.domain.models;
+package com.example.demo.infrastructure.adapters.in.web.dtos.requests;
 
-
-public record VenueModel(
+public record VenueDtoRequest(
         Long idVenue,
         String nameVenue,
         String addressVenue,
