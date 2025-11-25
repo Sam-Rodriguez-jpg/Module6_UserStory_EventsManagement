@@ -1,12 +1,19 @@
 package com.example.demo.infrastructure.adapters.out.jpa.adapters;
 
 import com.example.demo.domain.models.EventModel;
+import com.example.demo.domain.models.enums.StatusEventEnum;
 import com.example.demo.domain.ports.out.EventRepositoryPort;
 import com.example.demo.infrastructure.adapters.out.jpa.entites.EventEntity;
 import com.example.demo.infrastructure.adapters.out.jpa.mappers.EventMapperModel;
 import com.example.demo.infrastructure.adapters.out.jpa.repositories.EventJpaRepository;
+import com.example.demo.infrastructure.adapters.out.jpa.specifications.EventSpecificationsBuilder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -63,5 +70,29 @@ public class EventJpaAdapter implements EventRepositoryPort {
     @Override
     public void deleteAll() {
         eventJpaRepository.deleteAll();;
+    }
+
+
+
+    // FILTROS
+    public Page<EventModel> filter(
+            StatusEventEnum statusEvent,
+            Long idVenue,
+            LocalDateTime datetimeEvent,
+            String cityEvent,
+            Pageable pageable
+    ) {
+        Specification<EventEntity> specification =
+                EventSpecificationsBuilder.build(statusEvent, idVenue, datetimeEvent, cityEvent);
+
+        Page<EventEntity> page = eventJpaRepository.findAll(specification, pageable);
+
+        List<EventModel> result = new ArrayList<>();
+        for (EventEntity eventEntity : page.getContent()) {
+            result.add(eventMapperModel.toModel(eventEntity));
+
+        }
+
+        return new PageImpl<>(result, pageable, page.getTotalElements());
     }
 }
