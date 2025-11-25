@@ -1,4 +1,4 @@
-package com.example.demo.domain.ports.out;
+package com.example.demo.domain.ports.in.events;
 
 import com.example.demo.domain.models.EventModel;
 import com.example.demo.domain.models.enums.StatusEventEnum;
@@ -6,21 +6,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
-public interface EventRepositoryPort {
-    EventModel save(EventModel eventModel);
-    Optional<EventModel> findById(Long id);
-    List<EventModel> findAll();
-    void deleteById(Long id);
-    void deleteAll();
-
-    // FILTROS
+public interface FilterEventUseCaseInterface {
     Page<EventModel> filter(
             StatusEventEnum statusEvent,
             Long idVenue,
-            LocalDateTime datetimeEvent,
+            LocalDateTime dateEvent,
             String cityEvent,
             Pageable pageable
     );

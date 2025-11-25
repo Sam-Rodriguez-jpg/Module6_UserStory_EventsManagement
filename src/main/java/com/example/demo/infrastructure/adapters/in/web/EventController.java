@@ -1,16 +1,22 @@
 package com.example.demo.infrastructure.adapters.in.web;
 
 import com.example.demo.domain.models.EventModel;
+import com.example.demo.domain.models.enums.StatusEventEnum;
 import com.example.demo.domain.ports.in.events.*;
 import com.example.demo.infrastructure.adapters.in.web.dtos.requests.EventDtoRequest;
 import com.example.demo.infrastructure.adapters.in.web.dtos.responses.EventDtoResponse;
 import com.example.demo.infrastructure.adapters.in.web.mappers.EventMapperDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,10 +32,11 @@ public class EventController {
     private final PartialUpdateEventUseCaseInterface partialUpdateEventUseCase;
     private final DeleteEventByIdUseCaseInterface deleteEventByIdUseCase;
     private final DeleteAllEventsUseCaseInterface deleteAllEventsUseCase;
+    private final FilterEventUseCaseInterface filterEventUseCase;
 
     private final EventMapperDto eventMapperDto;
 
-    public EventController(GetAllEventsUseCaseInterface getAllEventsUseCase, GetEventByIdUseCaseInterface getEventByIdUseCase, CreateEventUseCaseInterface createEventUseCase, UpdateEventUseCaseInterface updateEventUseCase, PartialUpdateEventUseCaseInterface partialUpdateEventUseCase, DeleteEventByIdUseCaseInterface deleteEventByIdUseCase, DeleteAllEventsUseCaseInterface deleteAllEventsUseCase, EventMapperDto eventMapperDto) {
+    public EventController(GetAllEventsUseCaseInterface getAllEventsUseCase, GetEventByIdUseCaseInterface getEventByIdUseCase, CreateEventUseCaseInterface createEventUseCase, UpdateEventUseCaseInterface updateEventUseCase, PartialUpdateEventUseCaseInterface partialUpdateEventUseCase, DeleteEventByIdUseCaseInterface deleteEventByIdUseCase, DeleteAllEventsUseCaseInterface deleteAllEventsUseCase, FilterEventUseCaseInterface filterEventUseCase, EventMapperDto eventMapperDto) {
         this.getAllEventsUseCase = getAllEventsUseCase;
         this.getEventByIdUseCase = getEventByIdUseCase;
         this.createEventUseCase = createEventUseCase;
@@ -37,6 +44,7 @@ public class EventController {
         this.partialUpdateEventUseCase = partialUpdateEventUseCase;
         this.deleteEventByIdUseCase = deleteEventByIdUseCase;
         this.deleteAllEventsUseCase = deleteAllEventsUseCase;
+        this.filterEventUseCase = filterEventUseCase;
         this.eventMapperDto = eventMapperDto;
     }
 
@@ -110,5 +118,21 @@ public class EventController {
     public ResponseEntity<Void> deleteAll() {
         deleteAllEventsUseCase.deleteAll();
         return new ResponseEntity<>(HttpStatus.valueOf(204));
+    }
+
+    // FILTER
+    @GetMapping("/filter")
+    @Operation(summary = "Filters")
+    public ResponseEntity<Page<EventDtoResponse>> filter(
+            @RequestParam(required = false) StatusEventEnum statusEvent,
+            @RequestParam(required = false) Long idVenue,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)LocalDateTime datetimeEvent,
+            @RequestParam(required = false) String cityEvent,
+            @ParameterObject Pageable pageable
+    ) {
+        Page<EventModel> eventModelPage = filterEventUseCase.filter(statusEvent, idVenue, datetimeEvent, cityEvent, pageable);
+        Page<EventDtoResponse> eventDtoResponsePage = eventModelPage.map(eventMapperDto::toResponse);
+
+        return new ResponseEntity<>(eventDtoResponsePage, HttpStatus.valueOf(200));
     }
 }
