@@ -4,9 +4,13 @@ import com.example.demo.domain.models.VenueModel;
 import com.example.demo.domain.ports.in.venue.PartialUpdateVenueUseCaseInterface;
 import com.example.demo.domain.ports.out.VenueRepositoryPort;
 import com.example.demo.infrastructure.adapters.in.web.exceptions.custom.NotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+@Service
+@Transactional
 public class PartialUpdateVenueUseCaseImplement implements PartialUpdateVenueUseCaseInterface {
 
     private final VenueRepositoryPort venueRepositoryPort;

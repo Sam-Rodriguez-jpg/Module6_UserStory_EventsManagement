@@ -4,9 +4,13 @@ import com.example.demo.domain.models.EventModel;
 import com.example.demo.domain.ports.in.events.GetEventByIdUseCaseInterface;
 import com.example.demo.domain.ports.out.EventRepositoryPort;
 import com.example.demo.infrastructure.adapters.in.web.exceptions.custom.NotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+@Service
+@Transactional(readOnly = true)
 public class GetEventByIdUseCaseImplement implements GetEventByIdUseCaseInterface {
 
     private final EventRepositoryPort eventRepositoryPort;
