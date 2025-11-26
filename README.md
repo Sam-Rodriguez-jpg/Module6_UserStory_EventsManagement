@@ -2,8 +2,8 @@
 ## Relational Model
 ![img.png](img.png)
 
-## Events And Venues Management API
-Project Overview
+# Events And Venues Management API
+## Project Overview
 
 This project is an Event Management API that allows you to create, read, update, delete, and filter events. Each event belongs to a venue (physical location), and the API provides powerful filtering using JPA Specifications.
 
