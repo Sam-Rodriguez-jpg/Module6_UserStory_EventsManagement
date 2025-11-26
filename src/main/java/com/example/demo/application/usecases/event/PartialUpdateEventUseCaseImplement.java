@@ -5,10 +5,14 @@ import com.example.demo.domain.models.enums.StatusEventEnum;
 import com.example.demo.domain.ports.in.events.PartialUpdateEventUseCaseInterface;
 import com.example.demo.domain.ports.out.EventRepositoryPort;
 import com.example.demo.infrastructure.adapters.in.web.exceptions.custom.NotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+@Service
+@Transactional
 public class PartialUpdateEventUseCaseImplement implements PartialUpdateEventUseCaseInterface {
 
     private final EventRepositoryPort eventRepositoryPort;
