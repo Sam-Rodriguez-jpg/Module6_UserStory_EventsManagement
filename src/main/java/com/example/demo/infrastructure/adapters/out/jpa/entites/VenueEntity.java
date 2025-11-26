@@ -10,6 +10,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "venues")
 @Data
@@ -39,4 +42,23 @@ public class VenueEntity {
     @NotNull
     @Positive
     private Integer capacityVenue;
+
+    @OneToMany(
+            mappedBy = "venueEntity", // Apunta al atributo ManyToOne del evento
+            cascade = CascadeType.ALL, // Si se guardan venues, se guardan eventos
+            orphanRemoval = true, // Si se quita un venue, se eliminan los eventos con ese venue
+            fetch = FetchType.LAZY // No cargar eventos automáticamente
+    )
+    private List<EventEntity> eventsList = new ArrayList<>();
+
+    // Metodos para mejorar la consistencia del ciclo de vida
+    public void addEvent(EventEntity eventEntity) {
+        eventsList.add(eventEntity);
+        eventEntity.setVenueEntity(this);
+    }
+
+    public void removeEvent(EventEntity eventEntity) {
+        eventsList.remove(eventEntity);
+        eventEntity.setVenueEntity(null);
+    }
 }

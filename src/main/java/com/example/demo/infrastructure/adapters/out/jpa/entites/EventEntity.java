@@ -43,6 +43,7 @@ public class EventEntity {
     @NotNull
     private StatusEventEnum statusEvent;
 
+    // LAZY: Evita cargar el Venue cuando cargas un Event
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_venue", nullable = false)
     private VenueEntity venueEntity;
