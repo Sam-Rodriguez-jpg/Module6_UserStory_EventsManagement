@@ -7,6 +7,7 @@ import com.example.demo.infrastructure.adapters.in.web.dtos.requests.EventDtoReq
 import com.example.demo.infrastructure.adapters.in.web.dtos.responses.EventDtoResponse;
 import com.example.demo.infrastructure.adapters.in.web.mappers.EventMapperDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -50,7 +51,14 @@ public class EventController {
 
     // GET ALL
     @GetMapping
-    @Operation(summary = "Get All Events")
+    @Operation(
+            summary = "Obtener todos los eventos",
+            description = "Obtiene la lista de todos los eventos",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Lista de eventos obtenida"),
+                    @ApiResponse(responseCode = "204", description = "Lista obtenida pero no tiene registros")
+            }
+    )
     public ResponseEntity<List<EventDtoResponse>> getAll() {
         List<EventModel> eventModelList = getAllEventsUseCase.findAll();
         List<EventDtoResponse> eventDtoResponseList = new ArrayList<>();
@@ -67,7 +75,14 @@ public class EventController {
 
     // GET BY ID
     @GetMapping("/{id}")
-    @Operation(summary = "Get Event By ID")
+    @Operation(
+            summary = "Buscar evento por ID",
+            description = "Obtiene un evento con el atributo ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Evento obtenido"),
+                    @ApiResponse(responseCode = "404", description = "Evento no encontrado")
+            }
+    )
     public ResponseEntity<EventDtoResponse> getById(@PathVariable Long id) {
         EventModel eventModel = getEventByIdUseCase.findById(id);
         EventDtoResponse eventDtoResponse = eventMapperDto.toResponse(eventModel);
@@ -76,7 +91,17 @@ public class EventController {
 
     // POST
     @PostMapping
-    @Operation(summary = "Create Event")
+    @Operation(
+            summary = "Crear un evento",
+            description = "Crear un evento nuevo",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Evento creado"),
+                    @ApiResponse(responseCode = "400", description = "Datos inválidos")
+            }
+    )
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            ref = "#/components/requestBodies/EventDtoRequestPost"
+    )
     public ResponseEntity<EventDtoResponse> post(@RequestBody EventDtoRequest eventDtoRequest) {
         EventModel eventModel = eventMapperDto.toDomainModel(eventDtoRequest);
         EventModel savedEvent = createEventUseCase.create(eventModel);
@@ -86,7 +111,18 @@ public class EventController {
 
     // PUT
     @PutMapping("/{id}")
-    @Operation(summary = "Update Event")
+    @Operation(
+            summary = "Actualizar evento completamente",
+            description = "Buscar el evento por ID y luego actualizarlo con toda la información",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Evento actualizado"),
+                    @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+                    @ApiResponse(responseCode = "404", description = "Evento no encontrado")
+            }
+    )
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            ref = "#/components/requestBodies/EventDtoRequestPut"
+    )
     public ResponseEntity<EventDtoResponse> put(@PathVariable Long id, @RequestBody EventDtoRequest eventDtoRequest) {
         EventModel eventModel = eventMapperDto.toDomainModel(eventDtoRequest);
         EventModel updatedEvent = updateEventUseCase.update(id, eventModel);
@@ -96,7 +132,18 @@ public class EventController {
 
     // PATCH
     @PatchMapping("/{id}")
-    @Operation(summary = "Partial Update Event")
+    @Operation(
+            summary = "Actualizar evento parcialmente",
+            description = "Buscar el evento por ID y luego actualizarlo sin necesidad de toda la información",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Evento actualizado"),
+                    @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+                    @ApiResponse(responseCode = "404", description = "Evento no encontrado")
+            }
+    )
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            ref = "#/components/requestBodies/EventDtoRequestPatch"
+    )
     public ResponseEntity<EventDtoResponse> patch(@PathVariable Long id, @RequestBody EventDtoRequest eventDtoRequest) {
         EventModel eventModel = eventMapperDto.toDomainModel(eventDtoRequest);
         EventModel patchedEvent = partialUpdateEventUseCase.partialUpdate(id, eventModel);
@@ -106,7 +153,14 @@ public class EventController {
 
     // DELETE BY ID
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete Event By ID")
+    @Operation(
+            summary = "Eliminar evento por ID",
+            description = "Buscar el evento por ID y luego eliminarlo",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Evento eliminado"),
+                    @ApiResponse(responseCode = "404", description = "Evento no con encontrado")
+            }
+    )
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         deleteEventByIdUseCase.deleteById(id);
         return new ResponseEntity<>(HttpStatus.valueOf(204));
@@ -114,7 +168,13 @@ public class EventController {
 
     // DELETE ALL
     @DeleteMapping
-    @Operation(summary = "Delete All Events")
+    @Operation(
+            summary = "Eliminar todos los eventos",
+            description = "Eliminar todos los registros de eventos en la base de datos",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Tabla de eventos vacía"),
+            }
+    )
     public ResponseEntity<Void> deleteAll() {
         deleteAllEventsUseCase.deleteAll();
         return new ResponseEntity<>(HttpStatus.valueOf(204));
@@ -122,7 +182,13 @@ public class EventController {
 
     // FILTER
     @GetMapping("/filter")
-    @Operation(summary = "Filters")
+    @Operation(
+            summary = "Ver todos los filtros",
+            description = "Filtrar según los criterios opcionales",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Eventos filtrados"),
+            }
+    )
     public ResponseEntity<Page<EventDtoResponse>> filter(
             @RequestParam(required = false) StatusEventEnum statusEvent,
             @RequestParam(required = false) Long idVenue,

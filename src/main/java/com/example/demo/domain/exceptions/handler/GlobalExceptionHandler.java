@@ -1,9 +1,9 @@
-package com.example.demo.infrastructure.adapters.in.web.exceptions.handler;
+package com.example.demo.domain.exceptions.handler;
 
-import com.example.demo.infrastructure.adapters.in.web.exceptions.custom.BadRequestException;
-import com.example.demo.infrastructure.adapters.in.web.exceptions.custom.ConflictException;
-import com.example.demo.infrastructure.adapters.in.web.exceptions.custom.NoContentException;
-import com.example.demo.infrastructure.adapters.in.web.exceptions.custom.NotFoundException;
+import com.example.demo.domain.exceptions.custom.BadRequestException;
+import com.example.demo.domain.exceptions.custom.ConflictException;
+import com.example.demo.domain.exceptions.custom.NoContentException;
+import com.example.demo.domain.exceptions.custom.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
