@@ -3,6 +3,9 @@ package com.example.demo.infrastructure.adapters.in.web;
 import com.example.demo.domain.models.EventModel;
 import com.example.demo.domain.models.enums.StatusEventEnum;
 import com.example.demo.domain.ports.in.events.*;
+import com.example.demo.domain.validation.CreateValidation;
+import com.example.demo.domain.validation.PatchValidation;
+import com.example.demo.domain.validation.UpdateValidation;
 import com.example.demo.infrastructure.adapters.in.web.dtos.requests.EventDtoRequest;
 import com.example.demo.infrastructure.adapters.in.web.dtos.responses.EventDtoResponse;
 import com.example.demo.infrastructure.adapters.in.web.mappers.EventMapperDto;
@@ -15,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -102,7 +106,7 @@ public class EventController {
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             ref = "#/components/requestBodies/EventDtoRequestPost"
     )
-    public ResponseEntity<EventDtoResponse> post(@RequestBody EventDtoRequest eventDtoRequest) {
+    public ResponseEntity<EventDtoResponse> post(@Validated(CreateValidation.class) @RequestBody EventDtoRequest eventDtoRequest) {
         EventModel eventModel = eventMapperDto.toDomainModel(eventDtoRequest);
         EventModel savedEvent = createEventUseCase.create(eventModel);
         EventDtoResponse eventDtoResponse = eventMapperDto.toResponse(savedEvent);
@@ -123,7 +127,7 @@ public class EventController {
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             ref = "#/components/requestBodies/EventDtoRequestPut"
     )
-    public ResponseEntity<EventDtoResponse> put(@PathVariable Long id, @RequestBody EventDtoRequest eventDtoRequest) {
+    public ResponseEntity<EventDtoResponse> put(@Validated(UpdateValidation.class) @PathVariable Long id, @RequestBody EventDtoRequest eventDtoRequest) {
         EventModel eventModel = eventMapperDto.toDomainModel(eventDtoRequest);
         EventModel updatedEvent = updateEventUseCase.update(id, eventModel);
         EventDtoResponse eventDtoResponse = eventMapperDto.toResponse(updatedEvent);
@@ -144,7 +148,7 @@ public class EventController {
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             ref = "#/components/requestBodies/EventDtoRequestPatch"
     )
-    public ResponseEntity<EventDtoResponse> patch(@PathVariable Long id, @RequestBody EventDtoRequest eventDtoRequest) {
+    public ResponseEntity<EventDtoResponse> patch(@Validated(PatchValidation.class) @PathVariable Long id, @RequestBody EventDtoRequest eventDtoRequest) {
         EventModel eventModel = eventMapperDto.toDomainModel(eventDtoRequest);
         EventModel patchedEvent = partialUpdateEventUseCase.partialUpdate(id, eventModel);
         EventDtoResponse eventDtoResponse = eventMapperDto.toResponse(patchedEvent);

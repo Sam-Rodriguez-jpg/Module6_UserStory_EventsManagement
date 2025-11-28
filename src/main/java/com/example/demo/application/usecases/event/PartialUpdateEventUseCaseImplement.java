@@ -4,7 +4,7 @@ import com.example.demo.domain.models.EventModel;
 import com.example.demo.domain.models.enums.StatusEventEnum;
 import com.example.demo.domain.ports.in.events.PartialUpdateEventUseCaseInterface;
 import com.example.demo.domain.ports.out.EventRepositoryPort;
-import com.example.demo.domain.exceptions.custom.NotFoundException;
+import com.example.demo.domain.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,4 +1,4 @@
-package com.example.demo.domain.exceptions.custom;
+package com.example.demo.domain.exceptions;
 
 public class BadRequestException extends IllegalArgumentException {
     public BadRequestException(String message) {
