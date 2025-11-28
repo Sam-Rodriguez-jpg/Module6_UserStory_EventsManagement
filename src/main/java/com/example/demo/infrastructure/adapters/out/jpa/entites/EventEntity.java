@@ -22,25 +22,17 @@ public class EventEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idEvent;
 
-    @NotBlank
-    @Size(min = 1, max = 255, message = "Este campo puede tener entre 1 y 255 caracteres")
+
     private String nameEvent;
 
     private String descriptionEvent;
 
-    @NotNull
-    @Future
     private LocalDateTime datetimeEvent;
 
-    @NotNull
-    @Positive
     private Integer durationEvent;
 
-    @NotNull
-    @Positive
     private Double priceEvent;
 
-    @NotNull
     private StatusEventEnum statusEvent;
 
     // LAZY: Evita cargar el Venue cuando cargas un Event

@@ -26,21 +26,12 @@ public class VenueEntity {
     @Column(name = "idVenue")
     private Long idVenue;
 
-    @NotBlank(message = "No puedes dejar este campo vacío")
-    @Size(min = 1, max = 255, message = "Este campo puede tener entre 1 y 255 caracteres")
     private String nameVenue;
 
-    @NotBlank
-    @Size(min = 1, max = 255, message = "Este campo puede tener entre 1 y 255 caracteres")
     private String addressVenue;
 
-
-    @NotBlank
-    @Size(min = 1, max = 255, message = "Este campo puede tener entre 1 y 255 caracteres")
     private String cityVenue;
 
-    @NotNull
-    @Positive
     private Integer capacityVenue;
 
     @OneToMany(

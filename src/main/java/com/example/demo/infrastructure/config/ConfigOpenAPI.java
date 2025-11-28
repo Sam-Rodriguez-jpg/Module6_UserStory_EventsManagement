@@ -19,7 +19,7 @@ public class ConfigOpenAPI {
 
         // Ejemplo para POST (crear evento)
         Example postExample = new Example()
-                .summary("Ejemplo de creación de evento")
+                .summary("Ejemplo de creación de evento") // Titulo del ejemplo
                 .description("Payload recomendado para crear un nuevo evento")
                 .value("""
                         {
@@ -32,7 +32,7 @@ public class ConfigOpenAPI {
                           "idVenue": 50
                         }
                         """
-                );
+                ); // JSON que recomendara usar
 
         // Ejemplo para PUT (actualización completa)
         Example putExample = new Example()
@@ -63,21 +63,22 @@ public class ConfigOpenAPI {
                         """
                 );
 
-
+        // Este objeto define la configuración global de Swagger
         return new OpenAPI()
-                .info(new Info()
-                        .title("Modulo 6 - Proyecto de Eventos y Espacios")
-                        .version("4.4 Beta")
+                .info(new Info() // Información de la API
+                        .title("Modulo 6 - Proyecto de Eventos y Espacios") // Título de la API
+                        .version("4.4 Beta") // Version de la API
                         .description("API REST Sobre Organización de Eventos y Espacios")
                 )
+                // Define los RequestBodies para cada operacion
                 .components(new Components()
-                        .addRequestBodies("EventDtoRequestPost",
+                        .addRequestBodies("EventDtoRequestPost", // RequestBody
                                 new io.swagger.v3.oas.models.parameters.RequestBody()
-                                        .description("Cuerpo para crear un evento")
+                                        .description("Cuerpo para crear un evento") // Descripción del RequestBody
                                         .content(new Content().addMediaType("application/json",
                                                 new MediaType()
-                                                        .schema(new Schema<>().$ref("#/components/schemas/EventDtoRequest"))
-                                                        .addExamples("postExample", postExample)
+                                                        .schema(new Schema<>().$ref("#/components/schemas/EventDtoRequest")) // Referencia a la cual apunta el schema
+                                                        .addExamples("postExample", postExample) // Asocia el ejemplo creado
                                         ))
                         )
                         .addRequestBodies("EventDtoRequestPut",
