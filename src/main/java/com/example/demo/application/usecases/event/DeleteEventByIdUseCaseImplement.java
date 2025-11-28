@@ -4,11 +4,13 @@ import com.example.demo.domain.models.EventModel;
 import com.example.demo.domain.ports.in.events.DeleteEventByIdUseCaseInterface;
 import com.example.demo.domain.ports.out.EventRepositoryPort;
 import com.example.demo.domain.exceptions.NotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 @Transactional
 public class DeleteEventByIdUseCaseImplement implements DeleteEventByIdUseCaseInterface {
@@ -21,12 +23,33 @@ public class DeleteEventByIdUseCaseImplement implements DeleteEventByIdUseCaseIn
 
     @Override
     public void deleteById(Long id) {
+        log.info("Attempting to delete event with ID: {}", id);
+
         Optional<EventModel> optionalEventModel = eventRepositoryPort.findById(id);
 
         if (optionalEventModel.isEmpty()) {
+            log.warn("Event with ID {} not found in database. Cannot delete.", id);
             throw new NotFoundException("No se encontró ningún evento con el ID: " + id);
         }
 
+        EventModel eventModelExisting = optionalEventModel.get();
+
+        // Log del evento encontrado antes de eliminarlo
+        log.info(
+                "Event found. Preparing to delete: idEvent={}, name={}, description={}, datetime={}, duration={}, price={}, status={}, idVenue={}",
+                eventModelExisting.idEvent(),
+                eventModelExisting.nameEvent(),
+                eventModelExisting.descriptionEvent(),
+                eventModelExisting.datetimeEvent(),
+                eventModelExisting.durationEvent(),
+                eventModelExisting.priceEvent(),
+                eventModelExisting.statusEvent(),
+                eventModelExisting.idVenue()
+        );
+
         eventRepositoryPort.deleteById(id);
+
+        // Log final confirmando operación
+        log.info("Event with ID {} successfully deleted.", id);
     }
 }

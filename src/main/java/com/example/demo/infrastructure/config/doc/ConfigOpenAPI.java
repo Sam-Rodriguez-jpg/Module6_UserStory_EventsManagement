@@ -1,6 +1,5 @@
-package com.example.demo.infrastructure.config;
+package com.example.demo.infrastructure.config.doc;
 
-import com.example.demo.domain.models.enums.StatusEventEnum;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.examples.Example;

@@ -3,9 +3,11 @@ package com.example.demo.application.usecases.event;
 import com.example.demo.domain.models.EventModel;
 import com.example.demo.domain.ports.in.events.CreateEventUseCaseInterface;
 import com.example.demo.domain.ports.out.EventRepositoryPort;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @Transactional
 public class CreateEventUseCaseImplement implements CreateEventUseCaseInterface {
@@ -18,6 +20,7 @@ public class CreateEventUseCaseImplement implements CreateEventUseCaseInterface 
 
     @Override
     public EventModel create(EventModel eventModel) {
+        log.info("Creating new event in DB: {}", eventModel.nameEvent());
         return eventRepositoryPort.save(eventModel);
     }
 }

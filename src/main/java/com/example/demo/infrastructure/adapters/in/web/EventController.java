@@ -12,6 +12,7 @@ import com.example.demo.infrastructure.adapters.in.web.mappers.EventMapperDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +26,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Slf4j
 @RestController
 @RequestMapping("/api/events")
 @Tag(name = "Events", description = "Events Operations") // Agrupación de endpoints
@@ -64,6 +65,8 @@ public class EventController {
             }
     )
     public ResponseEntity<List<EventDtoResponse>> getAll() {
+        log.info("GET /api/events - Fetching all events");
+
         List<EventModel> eventModelList = getAllEventsUseCase.findAll();
         List<EventDtoResponse> eventDtoResponseList = new ArrayList<>();
 
@@ -88,6 +91,8 @@ public class EventController {
             }
     )
     public ResponseEntity<EventDtoResponse> getById(@PathVariable Long id) {
+        log.info("GET /api/events/{} - Fetching event", id);
+
         EventModel eventModel = getEventByIdUseCase.findById(id);
         EventDtoResponse eventDtoResponse = eventMapperDto.toResponse(eventModel);
         return new ResponseEntity<>(eventDtoResponse, HttpStatus.valueOf(200));
@@ -107,6 +112,8 @@ public class EventController {
             ref = "#/components/requestBodies/EventDtoRequestPost"
     )
     public ResponseEntity<EventDtoResponse> post(@Validated(CreateValidation.class) @RequestBody EventDtoRequest eventDtoRequest) {
+        log.info("POST /api/events - Creating event {}", eventDtoRequest.getNameEvent());
+
         EventModel eventModel = eventMapperDto.toDomainModel(eventDtoRequest);
         EventModel savedEvent = createEventUseCase.create(eventModel);
         EventDtoResponse eventDtoResponse = eventMapperDto.toResponse(savedEvent);
@@ -127,7 +134,9 @@ public class EventController {
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             ref = "#/components/requestBodies/EventDtoRequestPut"
     )
-    public ResponseEntity<EventDtoResponse> put(@Validated(UpdateValidation.class) @PathVariable Long id, @RequestBody EventDtoRequest eventDtoRequest) {
+    public ResponseEntity<EventDtoResponse> put(@PathVariable Long id, @Validated(UpdateValidation.class) @RequestBody EventDtoRequest eventDtoRequest) {
+        log.info("PUT /api/events/{} - Updating event", id);
+
         EventModel eventModel = eventMapperDto.toDomainModel(eventDtoRequest);
         EventModel updatedEvent = updateEventUseCase.update(id, eventModel);
         EventDtoResponse eventDtoResponse = eventMapperDto.toResponse(updatedEvent);
@@ -148,7 +157,9 @@ public class EventController {
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             ref = "#/components/requestBodies/EventDtoRequestPatch"
     )
-    public ResponseEntity<EventDtoResponse> patch(@Validated(PatchValidation.class) @PathVariable Long id, @RequestBody EventDtoRequest eventDtoRequest) {
+    public ResponseEntity<EventDtoResponse> patch(@PathVariable Long id, @Validated(PatchValidation.class) @RequestBody EventDtoRequest eventDtoRequest) {
+        log.info("PATCH /api/events/{} - Partially updating event {}", id, eventDtoRequest.getNameEvent());
+
         EventModel eventModel = eventMapperDto.toDomainModel(eventDtoRequest);
         EventModel patchedEvent = partialUpdateEventUseCase.partialUpdate(id, eventModel);
         EventDtoResponse eventDtoResponse = eventMapperDto.toResponse(patchedEvent);
@@ -166,6 +177,8 @@ public class EventController {
             }
     )
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+        log.info("DELETE /api/events/{} - Deleting event", id);
+
         deleteEventByIdUseCase.deleteById(id);
         return new ResponseEntity<>(HttpStatus.valueOf(204));
     }
@@ -180,6 +193,8 @@ public class EventController {
             }
     )
     public ResponseEntity<Void> deleteAll() {
+        log.warn("DELETE /api/events - Deleting ALL events");
+
         deleteAllEventsUseCase.deleteAll();
         return new ResponseEntity<>(HttpStatus.valueOf(204));
     }
@@ -200,6 +215,9 @@ public class EventController {
             @RequestParam(required = false) String cityEvent,
             @ParameterObject Pageable pageable
     ) {
+        log.info("GET /api/events/filter - Filtering with status={}, idVenue={}, datetime={}, city={}",
+                statusEvent, idVenue, datetimeEvent, cityEvent);
+
         Page<EventModel> eventModelPage = filterEventUseCase.filter(statusEvent, idVenue, datetimeEvent, cityEvent, pageable);
         Page<EventDtoResponse> eventDtoResponsePage = eventModelPage.map(eventMapperDto::toResponse);
 
