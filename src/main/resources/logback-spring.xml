@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- Permitimos usar MDC -->
+    <property name="LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss} [%level] [%X{traceId}] [%logger{36}] - %msg%n"/>
+
+    <!-- Salida por consola -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Nivel ROOT -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+</configuration>
+
+<!-- Con esta configuracion la salida se vera asi: 2025-11-27 12:00:00 [INFO] [a1b2c3d4-...] [EventService] - Event created successfully -->

@@ -1,11 +1,13 @@
 package com.example.demo.infrastructure.adapters.in.web.exceptions;
 
-import com.example.demo.domain.exceptions.BadRequestException;
 import com.example.demo.domain.exceptions.ConflictException;
 import com.example.demo.domain.exceptions.NotContentException;
 import com.example.demo.domain.exceptions.NotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -25,6 +27,8 @@ import java.util.UUID;
 // Encargada de estar atenta a cualquier excepción que pueda ocurrir y devolverla en el formato RFC 7807
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
     Método interno que construye un objeto ProblemDetail estándar donde se configura el:
@@ -52,8 +56,12 @@ public class GlobalExceptionHandler {
         // Momento en el que ocurrió el error
         problemDetail.setProperty("timestamp", LocalDateTime.now());
 
+        // traceId real del MDC (mismo que imprime en consola)
+        String traceId = MDC.get("traceId");
+
         // ID único para correlación de logs
-        problemDetail.setProperty("traceId", UUID.randomUUID().toString());
+        problemDetail.setProperty("traceId",
+                traceId != null ? traceId : UUID.randomUUID().toString());
 
         return problemDetail;
     }
@@ -65,6 +73,15 @@ public class GlobalExceptionHandler {
             MethodArgumentNotValidException exception,
             HttpServletRequest request
     ) {
+        String traceId = MDC.get("traceId");
+
+        log.warn("Validation error at {} - {} invalid fields - traceId={} - method={}",
+                request.getRequestURI(),
+                exception.getBindingResult().getErrorCount(),
+                traceId,
+                request.getMethod()
+        );
+
         Map<String, String> errors = new HashMap<>();
 
         for (FieldError fieldError : exception.getBindingResult().getFieldErrors()) {
@@ -81,12 +98,20 @@ public class GlobalExceptionHandler {
         return problemDetail;
     }
 
-    // 404 - Not Found
+    // 404 - Not Found (JPA)
     @ExceptionHandler(EntityNotFoundException.class)
     public ProblemDetail handleJpaNotFoundException(
             EntityNotFoundException exception,
             HttpServletRequest request
     ) {
+        String traceId = MDC.get("traceId");
+
+        log.warn("JPA Entity not found at {} - traceId={} - message={}",
+                request.getRequestURI(),
+                traceId,
+                exception.getMessage()
+        );
+
         return buildProblemDetail(
                 HttpStatus.valueOf(404),
                 exception.getMessage(),
@@ -100,6 +125,14 @@ public class GlobalExceptionHandler {
             DataIntegrityViolationException exception,
             HttpServletRequest request
     ) {
+        String traceId = MDC.get("traceId");
+
+        log.warn("DB constraint violation at {} - traceId={} - cause={}",
+                request.getRequestURI(),
+                traceId,
+                exception.getMostSpecificCause().getMessage()
+        );
+
         return buildProblemDetail(
                 HttpStatus.valueOf(409),
                 "Database constraint violation",
@@ -107,12 +140,24 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // Http Error
+    // 400 - JSON Error
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ProblemDetail handleJsonParseException(
             HttpMessageNotReadableException exception,
             HttpServletRequest request
     ) {
+        String traceId = MDC.get("traceId");
+
+        String cause =  exception.getMostSpecificCause() != null ?
+                exception.getMostSpecificCause().getMessage() :
+                exception.getMessage();
+
+        log.warn("Malformed JSON at {} - traceId={} - cause={}",
+                request.getRequestURI(),
+                traceId,
+                cause
+        );
+
         return buildProblemDetail(
                 HttpStatus.valueOf(400),
                 "Malformed JSON request",
@@ -128,6 +173,14 @@ public class GlobalExceptionHandler {
             NotContentException exception,
             HttpServletRequest request
     ) {
+        String traceId = MDC.get("traceId");
+
+        log.info("No content at {} - traceId={} - message={}",
+                request.getRequestURI(),
+                traceId,
+                exception.getMessage()
+        );
+
         return buildProblemDetail(
                 HttpStatus.valueOf(204),
                 exception.getMessage(),
@@ -141,6 +194,14 @@ public class GlobalExceptionHandler {
             NotFoundException exception,
             HttpServletRequest request
     ) {
+        String traceId = MDC.get("traceId");
+
+        log.warn("Resource not found at {} - traceId={} - message={}",
+                request.getRequestURI(),
+                traceId,
+                exception.getMessage()
+        );
+
         return buildProblemDetail(
                 HttpStatus.valueOf(404),
                 exception.getMessage(),
@@ -154,6 +215,15 @@ public class GlobalExceptionHandler {
             ConflictException exception,
             HttpServletRequest request
     ) {
+        String traceId = MDC.get("traceId");
+
+        log.warn("Conflict at {} - traceId={} - message={}",
+                request.getRequestURI(),
+                traceId,
+                exception.getMessage()
+        );
+
+
         return buildProblemDetail(
                 HttpStatus.valueOf(409),
                 exception.getMessage(),
@@ -167,6 +237,15 @@ public class GlobalExceptionHandler {
             Exception exception,
             HttpServletRequest request
     ) {
+        String traceId = MDC.get("traceId");
+
+        log.error("UNEXPECTED ERROR at {} - traceId={} - cause={}",
+                request.getRequestURI(),
+                traceId,
+                exception.getMessage()
+        );
+
+
         return buildProblemDetail(
                 HttpStatus.valueOf(500),
                 exception.getMessage(),
