@@ -12,6 +12,7 @@ import com.example.demo.infrastructure.adapters.in.web.mappers.EventMapperDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +32,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/events")
 @Tag(name = "Events", description = "Events Operations") // Agrupación de endpoints
+@RequiredArgsConstructor
 public class EventController {
     private final GetAllEventsUseCaseInterface getAllEventsUseCase;
     private final GetEventByIdUseCaseInterface getEventByIdUseCase;
@@ -42,19 +45,8 @@ public class EventController {
 
     private final EventMapperDto eventMapperDto;
 
-    public EventController(GetAllEventsUseCaseInterface getAllEventsUseCase, GetEventByIdUseCaseInterface getEventByIdUseCase, CreateEventUseCaseInterface createEventUseCase, UpdateEventUseCaseInterface updateEventUseCase, PartialUpdateEventUseCaseInterface partialUpdateEventUseCase, DeleteEventByIdUseCaseInterface deleteEventByIdUseCase, DeleteAllEventsUseCaseInterface deleteAllEventsUseCase, FilterEventUseCaseInterface filterEventUseCase, EventMapperDto eventMapperDto) {
-        this.getAllEventsUseCase = getAllEventsUseCase;
-        this.getEventByIdUseCase = getEventByIdUseCase;
-        this.createEventUseCase = createEventUseCase;
-        this.updateEventUseCase = updateEventUseCase;
-        this.partialUpdateEventUseCase = partialUpdateEventUseCase;
-        this.deleteEventByIdUseCase = deleteEventByIdUseCase;
-        this.deleteAllEventsUseCase = deleteAllEventsUseCase;
-        this.filterEventUseCase = filterEventUseCase;
-        this.eventMapperDto = eventMapperDto;
-    }
-
     // GET ALL
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @GetMapping
     @Operation(
             summary = "Obtener todos los eventos",
@@ -81,6 +73,7 @@ public class EventController {
     }
 
     // GET BY ID
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @GetMapping("/{id}")
     @Operation(
             summary = "Buscar evento por ID",
@@ -99,6 +92,7 @@ public class EventController {
     }
 
     // POST
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     @Operation(
             summary = "Crear un evento",
@@ -121,6 +115,7 @@ public class EventController {
     }
 
     // PUT
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     @Operation(
             summary = "Actualizar evento completamente",
@@ -144,6 +139,7 @@ public class EventController {
     }
 
     // PATCH
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}")
     @Operation(
             summary = "Actualizar evento parcialmente",
@@ -167,6 +163,7 @@ public class EventController {
     }
 
     // DELETE BY ID
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     @Operation(
             summary = "Eliminar evento por ID",
@@ -184,6 +181,7 @@ public class EventController {
     }
 
     // DELETE ALL
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping
     @Operation(
             summary = "Eliminar todos los eventos",
@@ -200,6 +198,7 @@ public class EventController {
     }
 
     // FILTER
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/filter")
     @Operation(
             summary = "Ver todos los filtros",
